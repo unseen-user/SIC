@@ -1,0 +1,50 @@
+Part 1: Configure Local AAA Authentication for Console Access on R1
+Step 1: Test connectivity.
+• Ping from PC-A to PC-B.
+• Ping from PC-A to PC-C.
+• Ping from PC-B to PC-C.
+
+Step 2: Configure a local username on R1.
+Configure a username of Admin1 with a secret password of admin1pa55.
+R1(config)# username Admin1 secret admin1pa55
+
+Step 3: Configure local AAA authentication for console access on R1.
+
+R1(config)# aaa new-model
+R1(config)# aaa authentication login default local
+
+Step 4: Configure the line console to use the defined AAA authentication method.
+Enable AAA on R1 and configure AAA authentication for the console login to use the default method list.
+R1(config)# line console 0
+R1(config-line)# login authentication default
+
+Step 5: Verify the AAA authentication method.
+Verify the user EXEC login using the local database.
+R1(config-line)# end
+
+Username: Admin1
+Password: admin1pa55 R1>
+
+Part 2: Configure Local AAA Authentication for vty Lines on R1
+
+Step 1: Configure domain name and crypto key for use with SSH.
+R1(config)# ip domain-name ccnasecurity.com
+R1(config)# crypto key generate rsa
+How many bits in the modulus [512]: 1024
+
+2: Configure a named list AAA authentication method for the vty lines on R1.
+Configure a named list called SSH-LOGIN to authenticate logins using local AAA.
+R1(config)# aaa authentication login SSH-LOGIN local
+
+Step 3: Configure the vty lines to use the defined AAA authentication method.
+
+R1(config)# line vty 0 4
+R1(config-line)# login authentication SSH-LOGIN
+R1(config-line)# transport input ssh 
+R1(config-line)# end
+
+Step 4: Verify the AAA authentication method.
+Verify the SSH configuration SSH to R1 from the command prompt of PC-A..
+PC> ssh –l Admin1 192.168.1.1
+Open
+Password: admin1pa55
