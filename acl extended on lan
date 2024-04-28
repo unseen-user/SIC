@@ -1,0 +1,10 @@
+do this on router 1 or rta
+access-list 199 permit tcp 10.101.117.32 0.0.0.15 10.101.117.0 0.0.0.31 eq 22
+ICMP is allowed, and a second ACL statement is needed. Use the same access list number to permit all
+ICMP traffic, regardless of the source or destination address. What is the second ACL statement? (Hint:
+Use the any keywords)
+access-list 199 permit icmp any any
+
+ACL might be on interface Gigabit Ethernet 0/2 in the outbound direction. What is the command to apply
+ACL 199 to the Gigabit Ethernet 0/2 interface?
+ip access-group 199 out
