@@ -1,0 +1,77 @@
+MD5
+OSPF MD5 authentication for all the routers in area 0.
+R1(config)# router ospf 1
+R1(config-router)# area 0 authentication message-digest
+R2(config)# router ospf 1
+R2(config-router)# area 0 authentication message-digest
+R3(config)# router ospf 1
+R3(config-router)# area 0 authentication message-digest
+
+Step 3: Configure the MD5 key for all the routers in area 0. Configure an MD5 key on the serial
+interfaces on R1, R2 and R3. Use the password MD5pa55 for key 1.
+R1(config)# interface s0/0/0
+R1(config-if)# ip ospf message-digest-key 1 md5 MD5pa55
+R2(config)# interface s0/0/0
+R2(config-if)# ip ospf message-digest-key 1 md5 MD5pa55
+R2(config-if)# interface s0/0/1
+R2(config-if)# ip ospf message-digest-key 1 md5 MD5pa55
+R3(config)# interface s0/0/1
+R3(config-if)# ip ospf message-digest-key 1 md5 MD5pa55
+
+show ip ospf interface.
+
+Part 2: Configure NTP
+Step 1: Enable NTP authentication on PC-A.
+a. On PC-A, click NTP under the Services tab to verify NTP service is enabled.
+b. To configure NTP authentication, click Enable under Authentication. Use key 1 and password NTPpa55
+for authentication.
+
+Step 2: Configure R1, R2, and R3 as NTP clients.
+R1(config)# ntp server 192.168.1.5
+R2(config)# ntp server 192.168.1.5
+R3(config)# ntp server 192.168.1.5
+
+Step 3: Configure routers to update hardware clock. Configure R1, R2, and R3 to periodically
+update the hardware clock with the time learned from NTP.
+R1(config)# ntp update-calendar
+R2(config)# ntp update-calendar
+R3(config)# ntp update-calendar
+Exit global configuration and verify that the hardware clock was updated using the command show clock.
+
+Step 4: Configure NTP authentication on the routers. Configure NTP
+authentication on R1, R2, and R3 using key 1 and password NTPpa55.
+R1(config)# ntp authenticate
+R1(config)# ntp trusted-key 1
+R1(config)# ntp authentication-key 1 md5 NTPpa55
+
+R2(config)# ntp authenticate
+R2(config)# ntp trusted-key 1
+R2(config)# ntp authentication-key 1 md5 NTPpa55
+
+R3(config)# ntp authenticate
+R3(config)# ntp trusted-key 1
+R3(config)# ntp authentication-key 1 md5 NTPpa55
+
+Step 5: Configure routers to timestamp log messages.
+Configure timestamp service for logging on the routers.
+
+R1(config)# service timestamps log datetime msec
+R2(config)# service timestamps log datetime msec
+R3(config)# service timestamps log datetime msec
+
+Part 3: Configure Routers to Log Messages to the Syslog Server
+
+Step 1: Configure the routers to identify the remote host (Syslog Server) that will receive
+logging messages.
+R1(config)# logging host 192.168.1.6
+R2(config)# logging host 192.168.1.6
+R3(config)# logging host 192.168.1.6
+
+The router console will display a message that logging has started.
+
+Step 2: Verify logging configuration.
+Use the command show logging to verify logging has been enabled.
+
+Step 3: Examine logs of the Syslog Server.
+From the Services tab of the Syslog Server’s dialogue box, select the Syslog services button. Observe the
+logging messages received from the routers.
