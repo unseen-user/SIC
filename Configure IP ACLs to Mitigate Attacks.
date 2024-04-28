@@ -1,0 +1,30 @@
+Configure ACL 10 to block all remote access to the routers except from PC-C.
+R1(config)# access-list 10 permit host 192.168.3.3
+R2(config)# access-list 10 permit host 192.168.3.3
+R3(config)# access-list 10 permit host 192.168.3.3
+
+Step 2: Apply ACL 10 to ingress traffic on the VTY lines. Use the access-class
+command to apply the access list to incoming traffic on the VTY lines.
+
+R1(config-line)# access-class 10 in
+R2(config-line)# access-class 10 in
+R3(config-line)# access-class 10 in
+
+Step 3: Verify exclusive access from management station PC-C.
+a. Establish an SSH session to 192.168.2.1 from PC-C (should be successful).
+PC> ssh –l SSHadmin 192.168.2.1
+
+Verify that PC-C can access the PC-A via HTTPS using the web browser.
+Be sure to disable HTTP and enable HTTPS on server PC-A.
+
+Step 2: Configure ACL 120 to specifically permit and deny the specified traffic. Use
+the access-list command to create a numbered IP ACL.
+R1(config)# access-list 120 permit udp any host 192.168.1.3 eq domain
+R1(config)# access-list 120 permit tcp any host 192.168.1.3 eq smtp
+R1(config)# access-list 120 permit tcp any host 192.168.1.3 eq ftp
+R1(config)# access-list 120 deny tcp any host 192.168.1.3 eq 443
+R1(config)# access-list 120 permit tcp host 192.168.3.3 host 10.1.1.1 eq 22
+
+Step 3: Apply the ACL to interface S0/0/0. 
+R1(config)# interface s0/0/0
+R1(config-if)# ip access-group 120 in
