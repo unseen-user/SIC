@@ -1,0 +1,39 @@
+Configure an ACL to permit FTP and ICMP.
+R1(config)# access-list ?
+R1(config)# access-list 100 ?
+To permit FTP traffic, enter permit, followed by a question mark.
+R1(config)# access-list 100 permit ?
+This ACL permits FTP and ICMP. ICMP is listed above, but FTP is not, because FTP uses TCP.
+Therefore,enter tcp to further refine the ACL help.
+R1(config)# access-list 100 permit tcp ?
+R1(config)# access-list 100 permit tcp 172.22.34.64 ?
+R1(config)# access-list 100 permit tcp 172.22.34.64 0.0.0.31 ?
+Configure the destination address. In this scenario, we are filtering traffic for a single destination, which is
+the server. Enter the host keyword followed by the server’s IP address.
+R1(config)# access-list 100 permit tcp 172.22.34.64 0.0.0.31 host 172.22.34.62 ?
+R1(config)# access-list 100 permit tcp 172.22.34.64 0.0.0.31 host 172.22.34.62 eq ?
+R1(config)# access-list 100 permit tcp 172.22.34.64 0.0.0.31 host 172.22.34.62 eq ftp
+# for icmp do the same shit and the code ill look like this
+R1(config)# access-list 100 permit icmp 172.22.34.64 0.0.0.31 host 172.22.34.62
+
+Step 2: Apply the ACL on the correct interface to filter traffic.
+From R1’s perspective, the traffic that ACL 100 applies to is inbound from the network connected to Gigabit
+Ethernet 0/0 interface. Enter interface configuration mode and apply the ACL.
+R1(config)# interface gigabitEthernet 0/0
+R1(config-if)# ip access-group 100
+
+Configure an ACL to permit HTTP access and ICMP.
+R1(config)# ip access-list ?
+R1(config)# ip access-list extended HTTP_ONLY
+R1(config-ext-nacl)# permit tcp 172.22.34.96 ?
+R1(config-ext-nacl)# permit tcp 172.22.34.96 0.0.0.15 ?
+R1(config-ext-nacl)# permit tcp 172.22.34.96 0.0.0.15 host 172.22.34.62 eq www
+f. Create a second access list statement to permit ICMP (ping, etc.) traffic from PC2 to Server. Note: The
+prompt remains the same and a specific type of ICMP traffic does not need to be specified. end result il look like this
+R1(config-ext-nacl)# permit icmp 172.22.34.96 0.0.0.15 host 172.22.34.62
+
+Step 2: Apply the ACL on the correct interface to filter traffic.
+From R1’s perspective, the traffic that access list HTTP_ONLY applies to is inbound from the network
+connected to Gigabit Ethernet 0/1 interface. Enter the interface configuration mode and apply the ACL.
+R1(config)# interface gigabitEthernet 0/1
+R1(config-if)# ip access-group HTTP_ONLY
